@@ -1,0 +1,44 @@
+name: Deploy ke Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Ambil kode dari repositori
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy ke production
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+        run: |
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN" \
+          --env SUPABASE_URL="$SUPABASE_URL" \
+          --env SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+          --env HMAC_SECRET="$HMAC_SECRET" \
+          --env TELEGRAM_BOT_TOKEN="$TELEGRAM_BOT_TOKEN" \
+          --env TELEGRAM_CHAT_ID="$TELEGRAM_CHAT_ID"
