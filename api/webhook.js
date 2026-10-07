@@ -26,7 +26,8 @@ export default async function handler(req, res) {
 
   // (d) Bandingkan dengan perbandingan string biasa, (e) tolak jika tidak cocok
   if (expected !== signature) {
-    return res.status(401).json({ status: "error", message: "Signature tidak valid" });
+    const sidik = crypto.createHash("sha256").update(HMAC_SECRET).digest("hex").slice(0, 8);
+    return res.status(401).json({ status: "error", message: "Signature tidak valid", debug_sidik: sidik });
   }
 
   // HMAC valid -> baca payload dan kirim alert Telegram
