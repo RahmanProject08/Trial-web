@@ -1,51 +1,203 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integrated Web Security Monitor</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            margin: 0;
-            padding: 40px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        h1 {
-            margin-top: 0;
-        }
-
-        .status {
-            padding: 15px;
-            background: #eef6ff;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security Dashboard - Integrated Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0b1020; --bg2:#141b34; --teks:#e6eaf5; --redup:#93a0c0;
+  --glass:rgba(255,255,255,.06); --garis:rgba(255,255,255,.14);
+  --aman1:#0f766e; --aman2:#14b8a6; --bahaya1:#b91c1c; --bahaya2:#f97316;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--teks);font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+  background:radial-gradient(1200px 600px at 10% -10%,#27315f 0%,transparent 60%),
+  linear-gradient(160deg,var(--bg1),var(--bg2)) fixed}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.5rem;margin:0 0 4px} .sub{color:var(--redup);margin:0 0 20px;font-size:.9rem}
+.glass{background:var(--glass);border:1px solid var(--garis);border-radius:16px;padding:20px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+h2{font-size:1rem;margin:0 0 14px;letter-spacing:.02em}
+.metric{transition:background .4s,border-color .4s}
+.metric .badge{display:inline-block;padding:4px 14px;border-radius:999px;font-weight:800;font-size:.8rem;
+  background:rgba(0,0,0,.25);letter-spacing:.1em}
+.metric .judul{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:800;margin:12px 0 4px}
+.metric .info{opacity:.9;font-size:.9rem}
+.state-aman{background:linear-gradient(135deg,var(--aman1),var(--aman2));border-color:transparent}
+.state-bahaya{background:linear-gradient(135deg,var(--bahaya1),var(--bahaya2));border-color:transparent}
+label{display:block;font-size:.8rem;color:var(--redup);margin:10px 0 4px}
+select,input[type=text],input[type=password]{width:100%;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--garis);background:rgba(0,0,0,.3);color:var(--teks);font:inherit}
+.cek{display:flex;gap:8px;align-items:center;margin:12px 0;font-size:.85rem}
+button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:600;
+  color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed);width:100%;margin-top:6px}
+button:disabled{opacity:.6;cursor:wait}
+.hasil{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.kartu{border-radius:12px;padding:12px;border:1px solid var(--garis);background:rgba(0,0,0,.25)}
+.kartu.aman{border-color:var(--aman2);background:rgba(20,184,166,.15)}
+.kartu.bahaya{border-color:var(--bahaya2);background:rgba(249,115,22,.15)}
+.kartu b{display:block;font-size:.8rem;color:var(--redup)}
+.kartu span{font-size:1.2rem;font-weight:800}
+.waktu{margin-top:12px;font-size:.95rem}
+#log{margin-top:16px;background:#05070f;border:1px solid var(--garis);border-radius:12px;padding:12px;
+  height:220px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;line-height:1.5}
+#log div{white-space:pre-wrap;word-break:break-word}
+.l-ok{color:#4ade80}.l-err{color:#f87171}.l-info{color:#93c5fd}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <h1>Security Dashboard</h1>
+  <p class="sub">Monitoring keamanan database: Supabase &rarr; Vercel &rarr; Telegram</p>
 
-<div class="container">
-    <h1>Integrated Web Security Monitor</h1>
+  <!-- 9.2 Metric card -->
+  <section id="kartuStatus" class="glass metric state-aman">
+    <span id="badge" class="badge">AMAN</span>
+    <div id="judulStatus" class="judul">SYSTEM SECURED</div>
+    <div id="infoStatus" class="info">Level ancaman: 0 (Normal)</div>
+  </section>
 
-    <p>
-        Dashboard monitoring keamanan web.
-    </p>
+  <div class="grid">
+    <!-- 9.3 Simulator webhook -->
+    <section class="glass">
+      <h2>Simulator Webhook HMAC (Client-side)</h2>
+      <label for="status">Status</label>
+      <select id="status"><option>AMAN</option><option>BAHAYA</option></select>
+      <label for="level">Level Ancaman</label>
+      <select id="level">
+        <option value="0">0 (Normal)</option><option value="1">1 (Rendah)</option>
+        <option value="2">2 (Tinggi)</option><option value="3">3 (Kritis)</option>
+      </select>
+      <label for="pesan">Pesan laporan</label>
+      <input type="text" id="pesan" placeholder="contoh: Percobaan akses tidak sah" maxlength="200">
+      <label for="kunci">Kunci Rahasia HMAC</label>
+      <input type="password" id="kunci" placeholder="harus sama dengan HMAC_SECRET di server" autocomplete="off">
+      <div class="cek"><input type="checkbox" id="palsu"><label for="palsu" style="margin:0">Kirim tanda tangan palsu (Simulasi Serangan)</label></div>
+      <button id="btnKirim" type="button">Kirim Webhook</button>
+    </section>
 
-    <div class="status">
-        <strong>Status:</strong> Sistem siap digunakan.
-    </div>
+    <!-- 9.4 Benchmark AI -->
+    <section class="glass">
+      <h2>Benchmark AI Asynchronous</h2>
+      <button id="btnAI" type="button">Jalankan Rantai AI (Paralel)</button>
+      <div class="waktu" id="waktuAI">Total waktu eksekusi: -</div>
+      <div class="hasil">
+        <div class="kartu" id="kartuRF"><b>Model RF</b><span id="hasilRF">-</span></div>
+        <div class="kartu" id="kartuSVM"><b>Model SVM</b><span id="hasilSVM">-</span></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 9.5 Log console -->
+  <div id="log" aria-live="polite"></div>
 </div>
 
+<script>
+const $ = (id) => document.getElementById(id);
+const MAKS_BARIS_LOG = 200;
+
+// ---------- 9.5 Log console ----------
+function log(teks, tipe = "info") {
+  const baris = document.createElement("div");
+  baris.className = "l-" + tipe;
+  baris.textContent = `[${new Date().toLocaleTimeString("id-ID", { hour12: false })}] ${teks}`;
+  $("log").appendChild(baris);
+  while ($("log").children.length > MAKS_BARIS_LOG) $("log").removeChild($("log").firstChild);
+  $("log").scrollTop = $("log").scrollHeight;
+}
+
+// ---------- 9.2 State metric card (manipulasi className) ----------
+function setState(status, level) {
+  const kartu = $("kartuStatus");
+  if (status === "BAHAYA") {
+    kartu.className = "glass metric state-bahaya";
+    $("badge").textContent = "BAHAYA";
+    $("judulStatus").textContent = "LEVEL ALERT: CRITICAL";
+  } else {
+    kartu.className = "glass metric state-aman";
+    $("badge").textContent = "AMAN";
+    $("judulStatus").textContent = "SYSTEM SECURED";
+  }
+  $("infoStatus").textContent = "Level ancaman: " + level;
+}
+
+// ---------- 9.3 HMAC-SHA256 dengan Web Crypto API ----------
+async function hmacSHA256Hex(kunci, pesan) {
+  const enc = new TextEncoder();
+  const cryptoKey = await window.crypto.subtle.importKey(
+    "raw", enc.encode(kunci), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await window.crypto.subtle.sign("HMAC", cryptoKey, enc.encode(pesan));
+  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+$("btnKirim").addEventListener("click", async () => {
+  const kunci = $("kunci").value;
+  if (!kunci) { log("Kunci rahasia HMAC wajib diisi", "err"); return; }
+  if (!window.crypto || !window.crypto.subtle) {
+    log("Web Crypto API tidak tersedia (butuh HTTPS)", "err");
+    return;
+  }
+  const status = $("status").value;
+  const level = Number($("level").value);
+  const payload = { status, level, message: $("pesan").value };
+  const body = JSON.stringify(payload);
+  const palsu = $("palsu").checked;
+  $("btnKirim").disabled = true;
+  try {
+    // Serangan simulasi: ditandatangani dengan kunci yang salah
+    const signature = await hmacSHA256Hex(palsu ? "kunci-palsu-penyerang" : kunci, body);
+    log(`POST /api/webhook | status=${status} level=${level} | signature=${signature.slice(0, 16)}...${palsu ? " (PALSU)" : ""}`);
+    const res = await fetch("/api/webhook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-signature": signature },
+      body,
+    });
+    let data = {};
+    try { data = await res.json(); } catch (_) {}
+    log(`Respons ${res.status}: ${data.message || "(tanpa pesan)"}`, res.ok ? "ok" : "err");
+    if (res.ok) setState(status, level);
+  } catch (err) {
+    log("Gagal mengirim webhook: " + err.message, "err");
+  } finally {
+    $("btnKirim").disabled = false;
+  }
+});
+
+// ---------- 9.4 Benchmark AI paralel ----------
+function tampilModel(idKartu, idTeks, hasil) {
+  const aman = hasil.prediction === "AMAN";
+  $(idKartu).className = "kartu " + (aman ? "aman" : "bahaya");
+  $(idTeks).textContent = `${hasil.prediction} (${(hasil.confidence * 100).toFixed(1)}%)`;
+}
+
+$("btnAI").addEventListener("click", async () => {
+  const input = $("pesan").value.trim() || "pemeriksaan rutin database";
+  $("btnAI").disabled = true;
+  log("GET /api/proses_ai | memulai rantai AI paralel...");
+  const t0 = performance.now();
+  try {
+    const res = await fetch("/api/proses_ai?input=" + encodeURIComponent(input));
+    const data = await res.json();
+    const rtt = ((performance.now() - t0) / 1000).toFixed(3);
+    if (!res.ok || data.status !== "success") throw new Error(data.message || "HTTP " + res.status);
+    $("waktuAI").textContent = `Total waktu eksekusi: ${data.duration_seconds.toFixed(3)} detik (round-trip browser: ${rtt} detik)`;
+    tampilModel("kartuRF", "hasilRF", data.results.model_rf);
+    tampilModel("kartuSVM", "hasilSVM", data.results.model_svm);
+    log(`AI selesai: ${data.duration_seconds.toFixed(3)} dtk | RF=${data.results.model_rf.prediction} SVM=${data.results.model_svm.prediction}`, "ok");
+  } catch (err) {
+    log("Gagal memanggil AI: " + err.message, "err");
+  } finally {
+    $("btnAI").disabled = false;
+  }
+});
+
+log("Dashboard siap.");
+</script>
 </body>
 </html>
